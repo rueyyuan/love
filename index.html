@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>能不能做我女朋友？</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            min-height: 100svh; /* 支持新的视口单位 */
+            margin: 0;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            background-attachment: fixed;
+            color: #d81b60;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            position: relative;
+            -webkit-tap-highlight-color: transparent; /* 移除iOS点击高亮 */
+            user-select: none; /* 防止选择文本 */
+        }
+
+        /* 背景爱心动画 */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255, 182, 193, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 105, 180, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 192, 203, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 45px;
+            border-radius: 25px;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.1),
+                0 5px 15px rgba(255, 105, 180, 0.2);
+            max-width: 520px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            box-sizing: border-box;
+            border: 2px solid rgba(255, 182, 193, 0.3);
+        }
+
+        .heart-icon {
+            font-size: 3em;
+            color: #ff69b4;
+            margin-bottom: 20px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.3); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.3); }
+            70% { transform: scale(1); }
+        }
+
+        img {
+            max-width: 85%;
+            height: auto;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.15),
+                0 4px 10px rgba(255, 105, 180, 0.2);
+            object-fit: contain;
+            border: 3px solid rgba(255, 182, 193, 0.4);
+        }
+
+        h1 {
+            font-size: 2.4em;
+            margin-bottom: 30px;
+            color: #c2185b;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.3);
+            font-weight: 600;
+            max-width: 100%;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            min-height: 80px;
+            position: relative;
+            gap: var(--button-gap, 25px);
+            transition: gap 0.3s ease;
+        }
+
+        button {
+            background: linear-gradient(145deg, #ff8a65, #ff7043);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.3em;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            white-space: nowrap;
+            min-width: 120px;
+            min-height: 45px;
+            transform: translate(0, 0);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.2),
+                0 2px 5px rgba(255, 112, 67, 0.3);
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.25),
+                0 3px 8px rgba(255, 112, 67, 0.4);
+        }
+
+        /* 移动设备触摸优化 */
+        @media (hover: none) and (pointer: coarse) {
+            button:hover {
+                transform: none;
+                box-shadow: 
+                    0 4px 15px rgba(0, 0, 0, 0.2),
+                    0 2px 5px rgba(255, 112, 67, 0.3);
+            }
+            
+            button:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
+            }
+            
+            #agree-btn:active {
+                transform: scale(0.95);
+            }
+            
+            #disagree-btn:active {
+                transform: scale(0.95);
+            }
+        }
+
+        #agree-btn {
+            background: linear-gradient(145deg, #4caf50, #45a049);
+            z-index: 3;
+            position: relative;
+            animation: gentle-pulse 2s ease-in-out infinite;
+        }
+
+        #disagree-btn {
+            background: linear-gradient(145deg, #ff5252, #f44336);
+            z-index: 2;
+        }
+
+        #agree-btn:hover {
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.25),
+                0 3px 8px rgba(69, 160, 73, 0.4);
+        }
+
+        @keyframes gentle-pulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            50% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 0 10px rgba(76, 175, 80, 0); }
+        }
+
+        .result-message {
+            margin-top: 30px;
+            font-size: 2.8em;
+            font-weight: bold;
+            color: #4caf50;
+            animation: fadeInScale 0.8s ease-out forwards;
+            text-shadow: 2px 2px 4px rgba(76, 175, 80, 0.3);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .result-heart {
+            display: inline-block;
+            color: #ff69b4;
+            font-size: 1.2em;
+            margin: 0 5px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 25px 20px;
+                border-radius: 20px;
+                max-width: 95%;
+            }
+            .heart-icon {
+                font-size: 2.5em;
+                margin-bottom: 15px;
+            }
+            img {
+                max-width: 90%;
+                margin-bottom: 18px;
+            }
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 20px;
+            }
+            .buttons {
+                gap: 15px;
+                min-height: 60px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            button {
+                padding: 12px 20px;
+                font-size: 1.1em;
+                min-width: 100px;
+                border-radius: 12px;
+            }
+            .result-message {
+                font-size: 2em;
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            .container {
+                padding: 20px 15px;
+                border-radius: 18px;
+                max-width: 98%;
+            }
+            .heart-icon {
+                font-size: 2.2em;
+                margin-bottom: 12px;
+            }
+            img {
+                max-width: 95%;
+                margin-bottom: 15px;
+            }
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 18px;
+            }
+            .buttons {
+                gap: 10px;
+                min-height: 55px;
+                --button-gap-min: -100px;
+            }
+            button {
+                padding: 10px 16px;
+                font-size: 1em;
+                min-width: 85px;
+                min-height: 40px;
+                border-radius: 10px;
+            }
+            .result-message {
+                font-size: 1.6em;
+                margin-top: 18px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            body {
+                padding: 5px;
+            }
+            .container {
+                padding: 15px 12px;
+                border-radius: 15px;
+            }
+            .heart-icon {
+                font-size: 2em;
+                margin-bottom: 10px;
+            }
+            img {
+                max-width: 98%;
+                margin-bottom: 12px;
+            }
+            h1 {
+                font-size: 1.3em;
+                margin-bottom: 15px;
+            }
+            .buttons {
+                gap: 8px;
+                min-height: 50px;
+            }
+            button {
+                padding: 8px 12px;
+                font-size: 0.9em;
+                min-width: 75px;
+                min-height: 35px;
+                border-radius: 8px;
+            }
+            .result-message {
+                font-size: 1.4em;
+                margin-top: 15px;
+            }
+        }
+
+        /* 特别小的屏幕 */
+        @media (max-width: 280px) {
+            .container {
+                padding: 12px 8px;
+            }
+            h1 {
+                font-size: 1.1em;
+                margin-bottom: 12px;
+            }
+            button {
+                padding: 6px 10px;
+                font-size: 0.8em;
+                min-width: 65px;
+                min-height: 30px;
+            }
+            .result-message {
+                font-size: 1.2em;
+            }
+        }
+
+        /* 横屏适配 */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 5px;
+            }
+            .container {
+                padding: 15px 20px;
+                max-width: 90%;
+            }
+            .heart-icon {
+                font-size: 1.8em;
+                margin-bottom: 8px;
+            }
+            img {
+                max-width: 60%;
+                margin-bottom: 10px;
+            }
+            h1 {
+                font-size: 1.4em;
+                margin-bottom: 12px;
+            }
+            .buttons {
+                min-height: 45px;
+                gap: 12px;
+            }
+            button {
+                padding: 8px 15px;
+                font-size: 0.95em;
+            }
+            .result-message {
+                font-size: 1.5em;
+                margin-top: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heart-icon">💝</div>
+        <img src="WhatsApp 图像2025-09-21于17.33.49_fdc5e9f5.jpg" alt="图片">`
+        <h1 id="question-text">你愿意做我的女朋友吗？💕</h1>
+        <div class="buttons">
+            <button id="agree-btn">愿意 💕</button>
+            <button id="disagree-btn">不愿意</button>
+        </div>
+        <div id="result" class="result-message" style="display: none;">
+        </div>
+    </div>
+
+    <script>
+        const agreeBtn = document.getElementById('agree-btn');
+        const disagreeBtn = document.getElementById('disagree-btn');
+        const buttonsContainer = document.querySelector('.buttons');
+        const containerElement = document.querySelector('.container');
+        const resultDiv = document.getElementById('result');
+        const questionText = document.getElementById('question-text');
+
+        let initialDisagreeWidth, initialDisagreeHeight, initialDisagreeFontSize, initialDisagreePaddingX, initialDisagreePaddingY;
+        let initialAgreeWidth, initialAgreeHeight, initialAgreeFontSize, initialAgreePaddingX, initialAgreePaddingY;
+        let currentGap;
+
+        let currentDisagreeScaleFactor = 1;
+        const disagreeScaleIncrement = 0.12;
+        const maxDisagreeScaleFactor = 2.8;
+
+        let currentAgreeScaleFactor = 1;
+        const agreeScaleIncrement = 0.2; // "愿意"按钮放大
+
+        let disagreeClickCount = 0;
+        const questionTexts = [
+            "真的不愿意吗？🥺",
+            "再考虑一下嘛～💭",
+            "求你了，答应我吧 🙏",
+            "我会对你很好的！💖",
+            "最后一次机会哦～ 🌹"
+        ];
+        
+        // 图片数组，使用本地路径
+        const imageUrls = [
+            "WhatsApp 图像2025-09-21于17.33.48_94b9e96f.jpg", // 初始图片
+            "WhatsApp 图像2025-09-21于17.33.48_94b9e96f.jpg", // 第1次点击
+            "WhatsApp 图像2025-09-21于17.33.48_3a3ed040.jpg", // 第2次点击
+            "WhatsApp 图像2025-09-21于17.33.48_3a3ed040.jpg", // 第3次点击
+            "WhatsApp 图像2025-09-21于17.33.48_eafb3125.jpg", // 第4次点击
+            "WhatsApp 图像2025-09-21于17.33.48_eafb3125.jpg"  // 第5次点击及以后
+        ];
+        
+        const mainImage = document.querySelector('img');
+
+        const getInitialButtonStyles = () => {
+            const computedDisagreeStyle = getComputedStyle(disagreeBtn);
+            initialDisagreeWidth = parseFloat(computedDisagreeStyle.width);
+            initialDisagreeHeight = parseFloat(computedDisagreeStyle.height);
+            initialDisagreeFontSize = parseFloat(computedDisagreeStyle.fontSize);
+            initialDisagreePaddingX = parseFloat(computedDisagreeStyle.paddingLeft);
+            initialDisagreePaddingY = parseFloat(computedDisagreeStyle.paddingTop);
+
+            const computedAgreeStyle = getComputedStyle(agreeBtn);
+            initialAgreeWidth = parseFloat(computedAgreeStyle.width);
+            initialAgreeHeight = parseFloat(computedAgreeStyle.height);
+            initialAgreeFontSize = parseFloat(computedAgreeStyle.fontSize);
+            initialAgreePaddingX = parseFloat(computedAgreeStyle.paddingLeft);
+            initialAgreePaddingY = parseFloat(computedAgreeStyle.paddingTop);
+
+            const initialComputedGap = parseFloat(getComputedStyle(buttonsContainer).gap);
+            if (currentGap === undefined || currentGap === null) {
+                currentGap = initialComputedGap;
+            } else if (Math.abs(currentGap - initialComputedGap) > 1) {
+                 currentGap = initialComputedGap;
+            }
+            
+            const rootStyle = getComputedStyle(document.documentElement);
+            minGap = parseFloat(rootStyle.getPropertyValue('--button-gap-min')) || -90;
+        };
+
+        window.addEventListener('load', getInitialButtonStyles);
+        window.addEventListener('resize', getInitialButtonStyles);
+
+        agreeBtn.addEventListener('click', () => {
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '耶！我们在一起了！💕';
+            agreeBtn.style.display = 'none';
+            disagreeBtn.style.display = 'none';
+            questionText.style.display = 'none';
+            
+            // 添加庆祝效果
+            document.body.style.background = 'linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%)';
+        });
+
+        disagreeBtn.addEventListener('click', () => {
+            disagreeClickCount++;
+
+            // 更换图片，除非已经到了最后的文本
+            if (disagreeClickCount <= questionTexts.length) {
+                // 根据点击次数更换图片
+                const imageIndex = Math.min(disagreeClickCount, imageUrls.length - 1);
+                mainImage.src = imageUrls[imageIndex];
+                
+                // 更换问题文本
+                questionText.innerHTML = questionTexts[disagreeClickCount - 1];
+                // 随机颜色，倾向于粉红色系
+                const colors = ['#e91e63', '#f06292', '#ff4081', '#ff69b4', '#c2185b'];
+                questionText.style.color = colors[Math.floor(Math.random() * colors.length)];
+                questionText.style.fontSize = `${Math.min(3.2, 2.4 + (disagreeClickCount * 0.12))}em`;
+            } else {
+                // 到了"你真的忍心拒绝我吗"这个阶段，不再更换图片，只更换文本
+                questionText.innerHTML = "你真的忍心拒绝我吗？😢💔";
+                questionText.style.color = "#d32f2f";
+                questionText.style.fontSize = "2.8em";
+            }
+
+            // 检查"不愿意"按钮是否还在容器内
+            const disagreeRect = disagreeBtn.getBoundingClientRect();
+            const containerRect = containerElement.getBoundingClientRect();
+
+            const isDisagreeInsideContainer = (
+                disagreeRect.right > containerRect.left + parseFloat(getComputedStyle(containerElement).paddingLeft) &&
+                disagreeRect.left < containerRect.right - parseFloat(getComputedStyle(containerElement).paddingRight) &&
+                disagreeRect.bottom > containerRect.top + parseFloat(getComputedStyle(containerElement).paddingTop) &&
+                disagreeRect.top < containerRect.bottom - parseFloat(getComputedStyle(containerElement).paddingBottom)
+            );
+
+            if (!isDisagreeInsideContainer) {
+                // 如果"不愿意"按钮被挤出屏幕，隐藏它但不显示成功消息
+                disagreeBtn.style.display = 'none';
+                return;
+            }
+
+            // "愿意"按钮放大逻辑 - 每次点击"不愿意"时放大"愿意"按钮
+            currentAgreeScaleFactor += agreeScaleIncrement;
+
+            agreeBtn.style.width = `${initialAgreeWidth * currentAgreeScaleFactor}px`;
+            agreeBtn.style.height = `${initialAgreeHeight * currentAgreeScaleFactor}px`;
+            agreeBtn.style.fontSize = `${initialAgreeFontSize * currentAgreeScaleFactor}px`;
+            agreeBtn.style.padding =
+                `${initialAgreePaddingY * currentAgreeScaleFactor}px ${initialAgreePaddingX * currentAgreeScaleFactor}px`;
+
+            // "不愿意"按钮保持不变或适度放大
+            if (currentDisagreeScaleFactor < maxDisagreeScaleFactor) {
+                currentDisagreeScaleFactor += disagreeScaleIncrement;
+                disagreeBtn.style.width = `${initialDisagreeWidth * currentDisagreeScaleFactor}px`;
+                disagreeBtn.style.height = `${initialDisagreeHeight * currentDisagreeScaleFactor}px`;
+                disagreeBtn.style.fontSize = `${initialDisagreeFontSize * currentDisagreeScaleFactor}px`;
+                disagreeBtn.style.padding =
+                    `${initialDisagreePaddingY * currentDisagreeScaleFactor}px ${initialDisagreePaddingX * currentDisagreeScaleFactor}px`;
+            }
+        });
+    </script>
+</body>
+</html>
