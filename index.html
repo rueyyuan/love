@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <title>跳动提示泡泡效果（读取 textlove.txt）</title>
+  <style>
+    :root{
+      --bg:#f7f7fb;
+      --bubble-radius:14px;
+      --font:'Noto Sans SC',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;
+    }
+    html,body{
+      margin:0; padding:0; height:100%; width:100%; overflow:hidden;
+      background:var(--bg); font-family:var(--font); display:flex; align-items:center; justify-content:center;
+    }
+    .stage{position:relative; width:100%; height:100%; overflow:hidden;}
+    .bubbles{position:absolute; inset:0; overflow:hidden}
+
+    .bubble{
+      position:absolute; min-width:140px; max-width:78%; padding:10px 14px;
+      border-radius:var(--bubble-radius);
+      box-shadow:0 6px 18px rgba(30,30,60,0.08);
+      transform-origin:center; opacity:0; transform:translateY(30px) scale(0.98);
+      display:flex; gap:8px; align-items:center; font-size:clamp(12px,1.8vw,16px);
+    }
+    .meta{display:flex;flex-direction:column}
+    .title{font-weight:700; font-size:clamp(10px,1.4vw,13px)}
+    .text{font-size:clamp(12px,1.6vw,15px); white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pink{background:linear-gradient(180deg,#ffecec,#ffdfe9)}
+    .blue{background:linear-gradient(180deg,#e8f4ff,#dff0ff)}
+    .green{background:linear-gradient(180deg,#eaffef,#d8ffea)}
+    .gray{background:linear-gradient(180deg,#f3f3f6,#ececf5)}
+
+    @keyframes popIn{
+      0%{opacity:0; transform:translateY(20px) scale(0.96);}
+      60%{opacity:1; transform:translateY(-6px) scale(1.02);}
+      100%{opacity:1; transform:translateY(0) scale(1);}
+    }
+
+    /* 🎃 弹出框样式 */
+    .popup{
+      position:fixed; inset:0; background:rgba(0,0,0,0.5);
+      display:flex; align-items:center; justify-content:center;
+      z-index:9999;
+    }
+    .popup-box{
+      background:#fff; border-radius:16px; padding:24px 32px;
+      text-align:center; max-width:300px; box-shadow:0 8px 30px rgba(0,0,0,0.2);
+      animation:fadeIn 0.3s ease;
+    }
+    .popup-box h2{margin:0 0 8px; font-size:20px; color:#ff6600;}
+    .popup-box p{margin:0 0 18px; font-size:15px; color:#333;}
+    .popup-box button{
+      background:#ff6600; color:white; border:none; border-radius:8px;
+      padding:8px 16px; font-size:15px; cursor:pointer;
+    }
+    .popup-box button:hover{background:#ff8533;}
+    @keyframes fadeIn{
+      from{opacity:0; transform:scale(0.9);}
+      to{opacity:1; transform:scale(1);}
+    }
+  </style>
+</head>
+<body>
+  <!-- 🎃 弹出提示框 -->
+  <div class="popup" id="popup">
+    <div class="popup-box">
+      <h2>万圣节礼物 🎃</h2>
+      <p>您有一份万圣节礼物，确定要打开吗？</p>
+      <button id="confirmBtn">确定</button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage" style="display:none;">
+    <div class="bubbles" id="bubbles"></div>
+  </div>
+
+  <script>
+    const popup = document.getElementById('popup');
+    const stage = document.getElementById('stage');
+    const container = document.getElementById('bubbles');
+    const stageHeight = window.innerHeight;
+
+    // 点击“确定”后开始
+    document.getElementById('confirmBtn').addEventListener('click', ()=>{
+      popup.style.display = 'none';
+      stage.style.display = 'block';
+      startApp();
+    });
+
+    function createBubble(text, color='pink', topPos) {
+      const el = document.createElement('div');
+      el.className = 'bubble ' + color;
+      const leftOffset = 12 + (Math.random()*window.innerWidth*0.5);
+      el.style.left = leftOffset + 'px';
+      el.style.top = (topPos || stageHeight * 0.1 + Math.random()*stageHeight*0.7) + 'px';
+      el.innerHTML = `<div style="width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,0.6);display:flex;align-items:center;justify-content:center;font-weight:700;">🌸</div>
+                      <div class="meta"><div class="title">提示</div><div class="text">${text}</div></div>`;
+      container.appendChild(el);
+      el.style.animation = 'popIn 420ms cubic-bezier(.16,.9,.35,1) forwards';
+      setTimeout(()=>{
+        el.animate([
+          { transform: 'translateY(0) rotate(0deg)' },
+          { transform: 'translateY(-3px) rotate(-1deg)' },
+          { transform: 'translateY(0) rotate(0deg)' }
+        ],{ duration: 2200 + Math.random()*1200, iterations: Infinity, direction: 'alternate' });
+      }, 300);
+    }
+
+    function startBubbles(lines){
+      let index = 0;
+      lines.forEach((line,i)=>{
+        setTimeout(()=>createBubble(line, randomColor()), 400 + i*400);
+      });
+      setInterval(()=>{
+        const line = lines[index % lines.length];
+        createBubble(line, randomColor());
+        index++;
+        const all = Array.from(container.querySelectorAll('.bubble'));
+        all.forEach(b=>{
+          const top = parseFloat(b.style.top || b.getBoundingClientRect().top);
+          b.style.top = (top - 48) + 'px';
+          const op = parseFloat(getComputedStyle(b).opacity);
+          b.style.opacity = Math.max(0, op - 0.06);
+        });
+        setTimeout(()=>{
+          all.forEach(b=>{
+            if (parseFloat(getComputedStyle(b).opacity) <= 0.02) b.remove();
+          });
+        }, 3000);
+      }, 2500);
+    }
+
+    function randomColor(){
+      const cls = ['pink','blue','green','gray'];
+      return cls[Math.floor(Math.random()*cls.length)];
+    }
+
+    function startApp(){
+      fetch('textlove.txt')
+        .then(res => res.text())
+        .then(text => {
+          const lines = text.split('\n').map(l=>l.trim()).filter(l=>l);
+          if(lines.length){
+            startBubbles(lines);
+          } else {
+            createBubble('textlove.txt 文件为空', 'gray');
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          createBubble('无法读取 textlove.txt 文件', 'gray');
+        });
+    }
+
+    window.addEventListener('resize',()=>{
+      document.querySelectorAll('.bubble').forEach(b=>b.remove());
+    });
+  </script>
+</body>
+</html>
